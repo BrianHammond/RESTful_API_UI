@@ -196,7 +196,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"JSON Post Get Tool", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Flask API Client", None))
         self.action_about.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.action_about_qt.setText(QCoreApplication.translate("MainWindow", u"About Qt", None))
         self.action_dark_mode.setText(QCoreApplication.translate("MainWindow", u"Dark Mode", None))

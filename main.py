@@ -3,7 +3,7 @@ import qdarkstyle
 import requests
 import json
 import datetime
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QMessageBox
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidget, QTableWidgetItem, QMessageBox
 from PySide6.QtCore import QSettings, QTimer
 from main_ui import Ui_MainWindow as main_ui
 from about_ui import Ui_Form as about_ui
@@ -167,39 +167,51 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
 
         self.table.resizeColumnsToContents()
 
+    
+    
+
     def api_delete(self):
-        # Get the selected row from the table
-        selected_row = self.table.currentRow()
-        
-        if selected_row == -1:  # No row selected
-            QMessageBox.warning(self, "Error", "Please select a row to delete.")
+        # Get the selected rows from the table
+        selected_rows = self.table.selectedIndexes()
+
+        if not selected_rows:  # No rows selected
+            QMessageBox.warning(self, "Error", "Please select rows to delete.")
             return
 
-        # Extract the ID of the employee from the table (assuming it's in the first column)
-        employee_id = self.table.item(selected_row, 0).text()
+        # Create a list to store the selected row indices (this avoids modifying the table while iterating)
+        rows_to_delete = list(set([index.row() for index in selected_rows]))  # Remove duplicates
 
         # Confirm before deleting
-        reply = QMessageBox.question(self, 'Delete Confirmation', 
-                                    f"Are you sure you want to delete employee with ID {employee_id}?",
+        reply = QMessageBox.question(self, 'Delete Confirmation',
+                                    f"Are you sure you want to delete {len(rows_to_delete)} employee(s)?",
                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
-            # Send the DELETE request using FlaskAPI's send_delete method
-            response = self.flask_api.send_delete(employee_id)
-            
-            if response:
-                print("Employee deleted successfully:", response)
-                QMessageBox.information(self, "Success", f"Employee with ID {employee_id} deleted successfully.")
-                # Remove the row from the table
-                self.table.removeRow(selected_row)
-            else:
-                print("Failed to delete employee.")
-                QMessageBox.warning(self, "Error", "Failed to delete employee.")
+            # Iterate over the rows and delete each
+            for row in sorted(rows_to_delete, reverse=True):  # Sort rows in descending order to avoid index shift
+                employee_id = self.table.item(row, 0).text()  # Extract the ID of the employee
+
+                # Send DELETE request using FlaskAPI's send_delete method
+                response = self.flask_api.send_delete(employee_id)
+
+                if response:
+                    print(f"Employee with ID {employee_id} deleted successfully:", response)
+                    self.table.removeRow(row)  # Remove the row from the table
+                else:
+                    print(f"Failed to delete employee with ID {employee_id}.")
+                    QMessageBox.warning(self, "Error", f"Failed to delete employee with ID {employee_id}.")
+
+
+
+
+
+
 
     def initialize_table(self):
         self.table.setRowCount(0) # clears the table
         self.table.setColumnCount(7)
         self.table.setHorizontalHeaderLabels(['ID', 'Name', 'Age', 'Title', 'Address 1', 'Address 2', 'Misc'])
+        self.table.setSelectionMode(QTableWidget.MultiSelection)
 
     def populate_table(self, row, id, name, age, title, address1, address2, misc):
         self.table.insertRow(row)
