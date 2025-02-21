@@ -167,9 +167,6 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
 
         self.table.resizeColumnsToContents()
 
-    
-    
-
     def api_delete(self):
         # Get the selected rows from the table
         selected_rows = self.table.selectedIndexes()
@@ -200,12 +197,6 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
                 else:
                     print(f"Failed to delete employee with ID {employee_id}.")
                     QMessageBox.warning(self, "Error", f"Failed to delete employee with ID {employee_id}.")
-
-
-
-
-
-
 
     def initialize_table(self):
         self.table.setRowCount(0) # clears the table
