@@ -59,7 +59,7 @@ class Ui_Form(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QCoreApplication.translate("Form", u"About", None))
-        self.label.setText(QCoreApplication.translate("Form", u"Flask API Client", None))
+        self.label.setText(QCoreApplication.translate("Form", u"RESTful API Tester", None))
         self.label_2.setText(QCoreApplication.translate("Form", u"<html><head/><body><p>This is just a simple program to help me practice python. </p><p>I have more at my <a href=\"https://github.com/brianhammond\"><span style=\" text-decoration: underline; color:#0000ff;\">github</span></a>.</p></body></html>", None))
     # retranslateUi
 
