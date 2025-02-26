@@ -185,6 +185,8 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         else:
             print("Failed to update data.")
             QMessageBox.warning(self, "Error", "Failed to update employee data.")
+        self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
 
     def api_delete(self): # delete data
         # Get the selected rows from the table
