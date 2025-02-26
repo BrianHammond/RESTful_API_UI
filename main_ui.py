@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(794, 645)
+        MainWindow.resize(839, 784)
         icon = QIcon()
         icon.addFile(u":/images/ms_icon.jpg", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         MainWindow.setWindowIcon(icon)
@@ -41,8 +41,8 @@ class Ui_MainWindow(object):
         self.action_dark_mode.setCheckable(True)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.verticalLayout_2 = QVBoxLayout(self.centralwidget)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_3 = QVBoxLayout(self.centralwidget)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.groupBox_2 = QGroupBox(self.centralwidget)
         self.groupBox_2.setObjectName(u"groupBox_2")
         self.verticalLayout = QVBoxLayout(self.groupBox_2)
@@ -54,7 +54,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.line_server)
 
 
-        self.verticalLayout_2.addWidget(self.groupBox_2)
+        self.verticalLayout_3.addWidget(self.groupBox_2)
 
         self.groupBox = QGroupBox(self.centralwidget)
         self.groupBox.setObjectName(u"groupBox")
@@ -114,7 +114,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
 
 
-        self.verticalLayout_2.addWidget(self.groupBox)
+        self.verticalLayout_3.addWidget(self.groupBox)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
@@ -129,14 +129,6 @@ class Ui_MainWindow(object):
         self.button_post.setMinimumSize(QSize(100, 0))
 
         self.horizontalLayout_3.addWidget(self.button_post)
-
-        self.button_get = QPushButton(self.centralwidget)
-        self.button_get.setObjectName(u"button_get")
-        sizePolicy.setHeightForWidth(self.button_get.sizePolicy().hasHeightForWidth())
-        self.button_get.setSizePolicy(sizePolicy)
-        self.button_get.setMinimumSize(QSize(100, 0))
-
-        self.horizontalLayout_3.addWidget(self.button_get)
 
         self.button_put = QPushButton(self.centralwidget)
         self.button_put.setObjectName(u"button_put")
@@ -159,24 +151,49 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addItem(self.horizontalSpacer)
 
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
+
+        self.groupBox_3 = QGroupBox(self.centralwidget)
+        self.groupBox_3.setObjectName(u"groupBox_3")
+        self.verticalLayout_2 = QVBoxLayout(self.groupBox_3)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.line_employee_id = QLineEdit(self.groupBox_3)
+        self.line_employee_id.setObjectName(u"line_employee_id")
+
+        self.horizontalLayout_4.addWidget(self.line_employee_id)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_4)
+
+        self.button_get = QPushButton(self.groupBox_3)
+        self.button_get.setObjectName(u"button_get")
+        sizePolicy.setHeightForWidth(self.button_get.sizePolicy().hasHeightForWidth())
+        self.button_get.setSizePolicy(sizePolicy)
+        self.button_get.setMinimumSize(QSize(100, 0))
+
+        self.verticalLayout_2.addWidget(self.button_get)
+
+
+        self.verticalLayout_3.addWidget(self.groupBox_3)
 
         self.table = QTableWidget(self.centralwidget)
         self.table.setObjectName(u"table")
         self.table.setRowCount(0)
         self.table.verticalHeader().setVisible(False)
 
-        self.verticalLayout_2.addWidget(self.table)
+        self.verticalLayout_3.addWidget(self.table)
 
         self.label_connection = QLabel(self.centralwidget)
         self.label_connection.setObjectName(u"label_connection")
 
-        self.verticalLayout_2.addWidget(self.label_connection)
+        self.verticalLayout_3.addWidget(self.label_connection)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 794, 22))
+        self.menubar.setGeometry(QRect(0, 0, 839, 22))
         self.menuHelp = QMenu(self.menubar)
         self.menuHelp.setObjectName(u"menuHelp")
         self.menuSettings = QMenu(self.menubar)
@@ -194,10 +211,11 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.line_address1, self.line_address2)
         QWidget.setTabOrder(self.line_address2, self.line_misc)
         QWidget.setTabOrder(self.line_misc, self.button_post)
-        QWidget.setTabOrder(self.button_post, self.button_get)
-        QWidget.setTabOrder(self.button_get, self.button_put)
+        QWidget.setTabOrder(self.button_post, self.button_put)
         QWidget.setTabOrder(self.button_put, self.button_delete)
-        QWidget.setTabOrder(self.button_delete, self.table)
+        QWidget.setTabOrder(self.button_delete, self.line_employee_id)
+        QWidget.setTabOrder(self.line_employee_id, self.button_get)
+        QWidget.setTabOrder(self.button_get, self.table)
 
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -237,10 +255,6 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(statustip)
         self.button_post.setText(QCoreApplication.translate("MainWindow", u"Post", None))
 #if QT_CONFIG(statustip)
-        self.button_get.setStatusTip(QCoreApplication.translate("MainWindow", u"Get Info", None))
-#endif // QT_CONFIG(statustip)
-        self.button_get.setText(QCoreApplication.translate("MainWindow", u"Get", None))
-#if QT_CONFIG(statustip)
         self.button_put.setStatusTip(QCoreApplication.translate("MainWindow", u"Update Info", None))
 #endif // QT_CONFIG(statustip)
         self.button_put.setText(QCoreApplication.translate("MainWindow", u"Put", None))
@@ -248,7 +262,14 @@ class Ui_MainWindow(object):
         self.button_delete.setStatusTip(QCoreApplication.translate("MainWindow", u"Delete Info", None))
 #endif // QT_CONFIG(statustip)
         self.button_delete.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
-        self.label_connection.setText(QCoreApplication.translate("MainWindow", u"FlaskAPI Connection Status Label", None))
+        self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"Search", None))
+        self.line_employee_id.setText("")
+        self.line_employee_id.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Employee ID", None))
+#if QT_CONFIG(statustip)
+        self.button_get.setStatusTip(QCoreApplication.translate("MainWindow", u"Get Info", None))
+#endif // QT_CONFIG(statustip)
+        self.button_get.setText(QCoreApplication.translate("MainWindow", u"Get", None))
+        self.label_connection.setText(QCoreApplication.translate("MainWindow", u"FastAPI Connection Status Label", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
         self.menuSettings.setTitle(QCoreApplication.translate("MainWindow", u"Settings", None))
     # retranslateUi

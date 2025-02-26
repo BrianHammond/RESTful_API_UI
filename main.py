@@ -100,20 +100,28 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         self.clear_fields()
 
     def api_get(self): # get data
-        
-        # Fetch the data from the Flask API using the send_get method
-        data = self.api.send_get()
-        
+        # Fetch the employee_id from the QLineEdit
+        employee_id = self.line_employee_id.text()
+
+        # Prepare the parameters for the GET request
+        params = {}
+        if employee_id:
+            params = {'employee_id': employee_id}  # Add employee_id to query parameters if present
+
+        # Call the send_get method from API class
+        data = self.api.send_get(params)  # Pass params to send_get method
+
         if data:
             print("Data received from API:", data)  # Log the received data
 
-            # Check if the data contains the 'Employees' key
+            # Check if the data contains the 'employees' key
             if "employees" in data:
                 employees = data["employees"]  # Get the list of employees
                 
                 # Initialize the table to ensure it is cleared before populating new data
                 self.initialize_table()
 
+                # Iterate over the employees data and populate the table
                 for record in employees:
                     if isinstance(record, dict):
                         # Extract values for each record
@@ -237,9 +245,9 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
     def update_connection_status(self):
         self.api.is_connected = self.api.check_connection()
         if self.api.is_connected:
-            self.label_connection.setText("Connected to FlaskAPI")
+            self.label_connection.setText("Connected to FastAPI")
         else:
-            self.label_connection.setText("Failed to connect to FlaskAPI")
+            self.label_connection.setText("Failed to connect to FastAPI")
 
     def dark_mode(self, checked):
         if checked:
@@ -287,10 +295,15 @@ class API: # Connects to the API
         except requests.RequestException as e:
             print(f"POST request error: {e}")
             return None
-        
-    def send_get(self):
+
+    def send_get(self, params=None):
         try:
-            response = requests.get(f'{self.base_url}/getdata')
+            # If params are provided, add them as query parameters to the URL
+            url = f'{self.base_url}/getdata'
+            if params:
+                response = requests.get(url, params=params)  # Use params for query parameters
+            else:
+                response = requests.get(url)
 
             if response.status_code // 100 == 2:  # Success: checks for 2xx status codes
                 print("GET request successful:", response.text)  # Print the raw response text
