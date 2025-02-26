@@ -42,6 +42,11 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         self.initialize_table()
 
     def employee_data(self, id, first_name, middle_name, last_name, age, title, address1, address2, misc):
+        if age.strip() == "":
+            age = None
+        else:
+            age = int(age)
+        
         data = {
             "employee_id": int(id),
             "name": {
@@ -49,7 +54,7 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
                 "middle_name": middle_name,
                 "last_name": last_name
             },
-            "age": int(age),
+            "age": age,
             "title": title,
             "address": {
                 "address_1": address1,
