@@ -234,6 +234,7 @@ class Ui_MainWindow(object):
         self.action_about_qt.setText(QCoreApplication.translate("MainWindow", u"About Qt", None))
         self.action_dark_mode.setText(QCoreApplication.translate("MainWindow", u"Dark Mode", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"Server Info", None))
+        self.line_server.setText(QCoreApplication.translate("MainWindow", u"localhost:8000", None))
         self.line_server.setPlaceholderText(QCoreApplication.translate("MainWindow", u"server ip:port", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Employee Information", None))
         self.line_firstname.setPlaceholderText(QCoreApplication.translate("MainWindow", u"First Name", None))
