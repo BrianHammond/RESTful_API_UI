@@ -61,6 +61,11 @@ class Ui_MainWindow(object):
         self.gridLayout = QGridLayout(self.groupBox)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(9, 9, 9, 9)
+        self.line_misc = QLineEdit(self.groupBox)
+        self.line_misc.setObjectName(u"line_misc")
+
+        self.gridLayout.addWidget(self.line_misc, 2, 0, 1, 1)
+
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -92,11 +97,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
 
-        self.line_misc = QLineEdit(self.groupBox)
-        self.line_misc.setObjectName(u"line_misc")
-
-        self.gridLayout.addWidget(self.line_misc, 2, 0, 1, 1)
-
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -109,6 +109,11 @@ class Ui_MainWindow(object):
         self.line_address2.setObjectName(u"line_address2")
 
         self.horizontalLayout_2.addWidget(self.line_address2)
+
+        self.line_country = QLineEdit(self.groupBox)
+        self.line_country.setObjectName(u"line_country")
+
+        self.horizontalLayout_2.addWidget(self.line_country)
 
 
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 1)
@@ -209,7 +214,8 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.line_age, self.line_title)
         QWidget.setTabOrder(self.line_title, self.line_address1)
         QWidget.setTabOrder(self.line_address1, self.line_address2)
-        QWidget.setTabOrder(self.line_address2, self.line_misc)
+        QWidget.setTabOrder(self.line_address2, self.line_country)
+        QWidget.setTabOrder(self.line_country, self.line_misc)
         QWidget.setTabOrder(self.line_misc, self.button_post)
         QWidget.setTabOrder(self.button_post, self.button_put)
         QWidget.setTabOrder(self.button_put, self.button_delete)
@@ -237,17 +243,18 @@ class Ui_MainWindow(object):
         self.line_server.setText(QCoreApplication.translate("MainWindow", u"localhost:8000", None))
         self.line_server.setPlaceholderText(QCoreApplication.translate("MainWindow", u"server ip:port", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"Employee Information", None))
+        self.line_misc.setText("")
+        self.line_misc.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Misc Info", None))
         self.line_firstname.setPlaceholderText(QCoreApplication.translate("MainWindow", u"First Name", None))
         self.line_middlename.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Middle Name", None))
         self.line_lastname.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Last Name", None))
         self.line_age.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Age", None))
         self.line_title.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Title", None))
-        self.line_misc.setText("")
-        self.line_misc.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Misc Info", None))
         self.line_address1.setText("")
         self.line_address1.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Address 1", None))
         self.line_address2.setText("")
         self.line_address2.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Address 2", None))
+        self.line_country.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Country", None))
 #if QT_CONFIG(tooltip)
         self.button_post.setToolTip("")
 #endif // QT_CONFIG(tooltip)

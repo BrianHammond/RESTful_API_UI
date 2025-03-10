@@ -21,7 +21,8 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         self.line_server.returnPressed.connect(self.update_base_url)       
 
         # Update label_connection based on connection status
-        self.update_connection_status()
+        self.label_connection.setText("Not Connected to FastAPI")
+        #self.update_connection_status()
 
         # Set up a timer to poll the connection status every 30 seconds
         self.connection_timer = QTimer(self)
@@ -39,11 +40,9 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         self.action_about.triggered.connect(self.show_about)
         self.action_about_qt.triggered.connect(self.about_qt)
 
-        self.initialize_table()
-
-    def employee_data(self, id, first_name, middle_name, last_name, age, title, address1, address2, misc):
+    def employee_data(self, id, first_name, middle_name, last_name, age, title, address1, address2, country, misc):
         if age.strip() == "":
-            age = None
+            age = 0
         else:
             age = int(age)
         
@@ -58,7 +57,8 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
             "title": title,
             "address": {
                 "address_1": address1,
-                "address_2": address2
+                "address_2": address2,
+                "country": country
             },
             "misc": misc
         }
@@ -74,6 +74,8 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         if self.api.base_url:
             self.api.is_connected = self.api.check_connection()
             self.update_connection_status()
+            self.initialize_table()
+            self.api_get()
 
     def api_post(self): # add data
         self.current_date = datetime.datetime.now().strftime("%m%d%Y%H%M%S")
@@ -87,13 +89,14 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         title = self.line_title.text()
         address1 = self.line_address1.text()
         address2 = self.line_address2.text()
+        country = self.line_country.text()
         misc = self.line_misc.text()
 
         row = self.table.rowCount()
-        self.populate_table(row, id, first_name, middle_name, last_name, age, title, address1, address2, misc)
+        self.populate_table(row, id, first_name, middle_name, last_name, age, title, address1, address2, country, misc)
 
         # Prepare the data in the format required by the API
-        data = self.employee_data(id, first_name, middle_name, last_name, age, title, address1, address2, misc)
+        data = self.employee_data(id, first_name, middle_name, last_name, age, title, address1, address2, country, misc)
 
         # Send the data using FlaskAPI's send_post method
         response = self.api.send_post(data)
@@ -138,13 +141,14 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
                         title = record.get("title")
                         address1 = record.get("address", {}).get("address_1", "")
                         address2 = record.get("address", {}).get("address_2", "")
+                        country = record.get("address", {}).get("country", "")
                         misc = record.get("misc")
 
                         # Find the next available row in the table
                         row = self.table.rowCount()
 
                         # Populate the table with the values
-                        self.populate_table(row, id, first_name, middle_name, last_name, age, title, address1, address2, misc)
+                        self.populate_table(row, id, first_name, middle_name, last_name, age, title, address1, address2, country, misc)
             else:
                 print("Unexpected data format: Missing 'Employees' key")
         else:
@@ -166,10 +170,11 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         title = self.table.item(selected_row, 5).text()
         address1 = self.table.item(selected_row, 6).text()
         address2 = self.table.item(selected_row, 7).text()
-        misc = self.table.item(selected_row, 8).text()
+        country = self.table.item(selected_row, 8).text()
+        misc = self.table.item(selected_row, 9).text()
 
         # Prepare the data to be sent in the PUT request
-        data = self.employee_data(id, first_name, middle_name, last_name, age, title, address1, address2, misc)
+        data = self.employee_data(id, first_name, middle_name, last_name, age, title, address1, address2, country, misc)
 
         # Debugging output
         print(f"Data to be sent in PUT request: {data}")
@@ -221,11 +226,11 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
 
     def initialize_table(self):
         self.table.setRowCount(0) # clears the table
-        self.table.setColumnCount(9)
-        self.table.setHorizontalHeaderLabels(['ID', 'First Name', 'Middle Name', 'Last Name', 'Age', 'Title', 'Address 1', 'Address 2', 'Misc'])
+        self.table.setColumnCount(10)
+        self.table.setHorizontalHeaderLabels(['ID', 'First Name', 'Middle Name', 'Last Name', 'Age', 'Title', 'Address 1', 'Address 2', 'Country', 'Misc'])
         self.table.setSelectionMode(QTableWidget.MultiSelection)
 
-    def populate_table(self, row, id, first_name, middle_name, last_name, age, title, address1, address2, misc):
+    def populate_table(self, row, id, first_name, middle_name, last_name, age, title, address1, address2, country, misc):
         self.table.insertRow(row)
         self.table.setItem(row, 0, QTableWidgetItem(str(id)))
         self.table.setItem(row, 1, QTableWidgetItem(first_name))
@@ -235,7 +240,8 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         self.table.setItem(row, 5, QTableWidgetItem(title))
         self.table.setItem(row, 6, QTableWidgetItem(address1))
         self.table.setItem(row, 7, QTableWidgetItem(address2))
-        self.table.setItem(row, 8, QTableWidgetItem(misc))
+        self.table.setItem(row, 8, QTableWidgetItem(country))
+        self.table.setItem(row, 9, QTableWidgetItem(misc))
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
 
@@ -247,6 +253,7 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         self.line_title.clear()
         self.line_address1.clear()
         self.line_address2.clear()
+        self.line_country.clear()
         self.line_misc.clear()
 
     def update_connection_status(self):
