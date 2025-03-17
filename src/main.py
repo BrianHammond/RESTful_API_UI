@@ -3,10 +3,10 @@ import qdarkstyle
 import requests
 import json
 import datetime
-from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidget, QTableWidgetItem, QMessageBox
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QMessageBox, QDialog
 from PySide6.QtCore import QSettings, QTimer
 from main_ui import Ui_MainWindow as main_ui
-from about_ui import Ui_Form as about_ui
+from about_ui import Ui_Dialog as about_ui
 
 class MainWindow(QMainWindow, main_ui): # used to display the main user interface
     def __init__(self):
@@ -37,8 +37,8 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         
         # menubar
         self.action_dark_mode.toggled.connect(self.dark_mode)
-        self.action_about.triggered.connect(self.show_about)
-        self.action_about_qt.triggered.connect(self.about_qt)
+        self.action_about_qt.triggered.connect(lambda: QApplication.aboutQt())
+        self.action_about.triggered.connect(lambda: AboutWindow(dark_mode=self.action_dark_mode.isChecked()).exec())
 
     def employee_data(self, id, first_name, middle_name, last_name, age, title, address1, address2, country, misc):
         if age.strip() == "":
@@ -269,13 +269,6 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         else:
             self.setStyleSheet('')
 
-    def show_about(self): #loads the About window
-        self.about_window = AboutWindow(dark_mode=self.action_dark_mode.isChecked())
-        self.about_window.show()
-
-    def about_qt(self): #loads the About Qt window
-        QApplication.aboutQt()
-
     def closeEvent(self, event):  # Save settings when closing the app
         self.settings_manager.save_settings()  # Save settings using the manager
         event.accept()
@@ -396,13 +389,13 @@ class SettingsManager: # used to load and save settings when opening and closing
         self.settings.setValue('dark_mode', self.main_window.action_dark_mode.isChecked())
         self.settings.setValue('server_url', self.main_window.line_server.text())
 
-class AboutWindow(QWidget, about_ui): # Configures the About window
+class AboutWindow(QDialog, about_ui): # this is the About Window
     def __init__(self, dark_mode=False):
         super().__init__()
         self.setupUi(self)
-
         if dark_mode:
             self.setStyleSheet(qdarkstyle.load_stylesheet_pyside6())
+        self.button_ok.clicked.connect(self.accept)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv) # needs to run first
