@@ -2,11 +2,11 @@ import sys
 import qdarkstyle
 import requests
 import json
-import datetime
 from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QMessageBox, QDialog
 from PySide6.QtCore import QSettings, QTimer
 from main_ui import Ui_MainWindow as main_ui
 from about_ui import Ui_Dialog as about_ui
+import uuid
 
 class MainWindow(QMainWindow, main_ui): # used to display the main user interface
     def __init__(self):
@@ -47,7 +47,7 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
             age = int(age)
         
         data = {
-            "employee_id": int(id),
+            "id": id,
             "name": {
                 "first_name": first_name,
                 "middle_name": middle_name,
@@ -77,9 +77,9 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
             self.initialize_table()
             self.api_get()
 
-    def api_post(self): # add data
-        self.current_date = datetime.datetime.now().strftime("%m%d%Y%H%M%S")
-        id = self.current_date
+    def api_post(self): # uploads data
+
+        id = str(uuid.uuid4()) # Generate a unique ID for the person
         
         # Get the values from the QLineEdits
         first_name = self.line_firstname.text()
@@ -107,14 +107,14 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
 
         self.clear_fields()
 
-    def api_get(self): # get data
+    def api_get(self): # queries the data
         # Fetch the employee_id from the QLineEdit
-        employee_id = self.line_employee_id.text()
+        id = self.line_employee_id.text()
 
         # Prepare the parameters for the GET request
         params = {}
-        if employee_id:
-            params = {'employee_id': employee_id}  # Add employee_id to query parameters if present
+        if id:
+            params = {'id': id}  # Add employee_id to query parameters if present
 
         # Call the send_get method from API class
         data = self.api.send_get(params)  # Pass params to send_get method
@@ -133,7 +133,7 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
                 for record in employees:
                     if isinstance(record, dict):
                         # Extract values for each record
-                        id = record.get("employee_id")
+                        id = record.get("id")
                         first_name = record.get("name", {}).get("first_name", "")
                         middle_name = record.get("name", {}).get("middle_name", "")
                         last_name = record.get("name", {}).get("last_name", "")
@@ -212,17 +212,17 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         if reply == QMessageBox.Yes:
             # Iterate over the rows and delete each
             for row in sorted(rows_to_delete, reverse=True):  # Sort rows in descending order to avoid index shift
-                employee_id = self.table.item(row, 0).text()  # Extract the ID of the employee
+                id = self.table.item(row, 0).text()  # Extract the ID of the employee
 
                 # Send DELETE request using FlaskAPI's send_delete method
-                response = self.api.send_delete(employee_id)
+                response = self.api.send_delete(id)
 
                 if response:
-                    print(f"Employee with ID {employee_id} deleted successfully:", response)
+                    print(f"Employee with ID {id} deleted successfully:", response)
                     self.table.removeRow(row)  # Remove the row from the table
                 else:
-                    print(f"Failed to delete employee with ID {employee_id}.")
-                    QMessageBox.warning(self, "Error", f"Failed to delete employee with ID {employee_id}.")
+                    print(f"Failed to delete employee with ID {id}.")
+                    QMessageBox.warning(self, "Error", f"Failed to delete employee with ID {id}.")
 
     def initialize_table(self):
         self.table.setRowCount(0) # clears the table
@@ -232,7 +232,7 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
 
     def populate_table(self, row, id, first_name, middle_name, last_name, age, title, address1, address2, country, misc):
         self.table.insertRow(row)
-        self.table.setItem(row, 0, QTableWidgetItem(str(id)))
+        self.table.setItem(row, 0, QTableWidgetItem(id))
         self.table.setItem(row, 1, QTableWidgetItem(first_name))
         self.table.setItem(row, 2, QTableWidgetItem(middle_name))
         self.table.setItem(row, 3, QTableWidgetItem(last_name))
@@ -332,7 +332,7 @@ class API: # Connects to the API
 
     def send_put(self, data):
         try:
-            url = f'{self.base_url}/putdata/{data["employee_id"]}'  # Use the ID directly in the URL
+            url = f'{self.base_url}/putdata/{data["id"]}'  # Use the ID directly in the URL
             response = requests.put(url, json=data)  # Send the PUT request with the ID in the URL
             
             # Debugging output
@@ -348,9 +348,9 @@ class API: # Connects to the API
             print(f"PUT request error: {e}")
             return None
 
-    def send_delete(self, employee_id):
+    def send_delete(self, id):
         try:
-            response = requests.delete(f'{self.base_url}/deletedata/{employee_id}')
+            response = requests.delete(f'{self.base_url}/deletedata/{id}')
 
             if response.status_code // 100 == 2:  # Success: checks for 2xx status codes
                 print("DELETE request successful:", response.json())
