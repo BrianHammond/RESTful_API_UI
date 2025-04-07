@@ -2,11 +2,12 @@ import sys
 import qdarkstyle
 import requests
 import json
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QMessageBox, QDialog
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QMessageBox, QDialog, QFileDialog
 from PySide6.QtCore import QSettings, QTimer
 from main_ui import Ui_MainWindow as main_ui
 from about_ui import Ui_Dialog as about_ui
 import uuid
+import csv
 
 class MainWindow(QMainWindow, main_ui): # used to display the main user interface
     def __init__(self):
@@ -34,6 +35,8 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         self.button_get.clicked.connect(self.api_get)
         self.button_put.clicked.connect(self.api_put)
         self.button_delete.clicked.connect(self.api_delete)
+        self.button_import_csv.clicked.connect(self.import_csv) # Import CSV button is pressed
+        self.button_export_csv.clicked.connect(self.export_to_csv) # Export to CSV button is pressed
         
         # menubar
         self.action_dark_mode.toggled.connect(self.dark_mode)
@@ -77,7 +80,7 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
             self.initialize_table()
             self.api_get()
 
-    def api_post(self): # uploads data
+    def api_post(self): # uploads data (Post Button Pressed)
 
         id = str(uuid.uuid4()) # Generate a unique ID for the person
         
@@ -107,7 +110,7 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
 
         self.clear_fields()
 
-    def api_get(self): # queries the data
+    def api_get(self): # queries the data (Get Button Pressed)
         # Fetch the employee_id from the QLineEdit
         id = self.line_employee_id.text()
 
@@ -154,7 +157,7 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         else:
             print("Failed to retrieve data.")
 
-    def api_put(self): # update data
+    def api_put(self): # update data (Put Button Pressed)
         selected_row = self.table.currentRow()
         
         if selected_row == -1:  # No row selected
@@ -193,7 +196,7 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
 
-    def api_delete(self): # delete data
+    def api_delete(self): # delete data (Delete Button Pressed)
         # Get the selected rows from the table
         selected_rows = self.table.selectedIndexes()
 
@@ -255,6 +258,112 @@ class MainWindow(QMainWindow, main_ui): # used to display the main user interfac
         self.line_address2.clear()
         self.line_country.clear()
         self.line_misc.clear()
+
+    def import_csv(self):  # imports data from a CSV file
+        # Open file dialog to select CSV file
+        filename, _ = QFileDialog.getOpenFileName(self, 'Import File', '', 'CSV Files (*.csv)')
+        
+        if not filename:
+            return
+        
+        try:
+            with open(filename, 'r', newline='') as file:
+                reader = csv.DictReader(file)
+                
+                # Verify required columns are present
+                required_columns = {'ID', 'First Name', 'Middle Name', 'Last Name', 'Age', 
+                                'Title', 'Address 1', 'Address 2', 'Country', 'Misc'}
+                if not required_columns.issubset(reader.fieldnames):
+                    QMessageBox.critical(self, "Import Error", 
+                                    "CSV file is missing required columns")
+                    return
+                
+                # Get existing IDs from the table
+                existing_ids = set()
+                for row in range(self.table.rowCount()):
+                    id_item = self.table.item(row, 0)  # ID is in column 0
+                    if id_item:
+                        existing_ids.add(id_item.text())
+                
+                imported_count = 0
+                
+                # Process each row in the CSV
+                for row in reader:
+                    # Check if ID is present and valid, otherwise generate a new one
+                    id = row['ID'].strip()
+                    if not id:  # If ID is blank or empty
+                        id = str(uuid.uuid4())
+                    
+                    # Skip if ID already exists in table
+                    if id in existing_ids:
+                        print(f"Skipping existing employee {id}")
+                        continue
+                    
+                    # Extract data from the row
+                    first_name = row['First Name']
+                    middle_name = row['Middle Name']
+                    last_name = row['Last Name']
+                    age = row['Age']
+                    title = row['Title']
+                    address1 = row['Address 1']
+                    address2 = row['Address 2']
+                    country = row['Country']
+                    misc = row['Misc']
+                    
+                    # Add to table
+                    row = self.table.rowCount()
+                    self.populate_table(row, id, first_name, middle_name, 
+                                    last_name, age, title, address1, address2, country, misc)
+                    
+                    # Prepare data for API POST
+                    data = self.employee_data(id, first_name, middle_name, last_name, 
+                                        age, title, address1, address2, country, misc)
+                    
+                    # Send to API
+                    response = self.api.send_post(data)
+                    if response:
+                        print(f"Imported employee {id} successfully")
+                        imported_count += 1
+                    else:
+                        print(f"Failed to import employee {id}")
+                
+                if imported_count > 0:
+                    QMessageBox.information(self, "Import Successful", 
+                                        f"Successfully imported {imported_count} new employees from {filename}")
+                else:
+                    QMessageBox.information(self, "Import Complete", 
+                                        "No new employees were imported - all IDs already exist")
+                    
+        except Exception as e:
+            QMessageBox.critical(self, "Import Error", f"Failed to import CSV: {str(e)}")
+
+    def export_to_csv(self): # exports data to a CSV file
+        self.filename = QFileDialog.getSaveFileName(self, 'Export File', '', 'Data File (*.csv)')
+
+        if not self.filename[0]:
+            return
+
+        try:
+            with open(self.filename[0], 'w', newline='') as file:
+                writer = csv.writer(file)
+                
+                # Write the header row (column names from the table)
+                headers = [self.table.horizontalHeaderItem(col).text() for col in range(self.table.columnCount())]
+                writer.writerow(headers)
+
+                # Write the data rows from the table
+                for row in range(self.table.rowCount()):
+                    row_data = []
+                    for col in range(self.table.columnCount()):
+                        item = self.table.item(row, col)
+                        # Append the text if the item exists, otherwise append an empty string
+                        row_data.append(item.text() if item else '')
+                    writer.writerow(row_data)
+
+            QMessageBox.information(self, "Export Successful", f"Table data exported to {self.filename[0]}")
+        
+        except Exception as e:
+            QMessageBox.critical(self, "Export Error", f"Failed to export to CSV: {str(e)}")
 
     def update_connection_status(self):
         self.api.is_connected = self.api.check_connection()

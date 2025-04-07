@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -172,13 +172,38 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
 
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.button_get = QPushButton(self.groupBox_3)
         self.button_get.setObjectName(u"button_get")
         sizePolicy.setHeightForWidth(self.button_get.sizePolicy().hasHeightForWidth())
         self.button_get.setSizePolicy(sizePolicy)
         self.button_get.setMinimumSize(QSize(100, 0))
 
-        self.verticalLayout_2.addWidget(self.button_get)
+        self.horizontalLayout_5.addWidget(self.button_get)
+
+        self.button_import_csv = QPushButton(self.groupBox_3)
+        self.button_import_csv.setObjectName(u"button_import_csv")
+        sizePolicy.setHeightForWidth(self.button_import_csv.sizePolicy().hasHeightForWidth())
+        self.button_import_csv.setSizePolicy(sizePolicy)
+        self.button_import_csv.setMinimumSize(QSize(100, 0))
+
+        self.horizontalLayout_5.addWidget(self.button_import_csv)
+
+        self.button_export_csv = QPushButton(self.groupBox_3)
+        self.button_export_csv.setObjectName(u"button_export_csv")
+        sizePolicy.setHeightForWidth(self.button_export_csv.sizePolicy().hasHeightForWidth())
+        self.button_export_csv.setSizePolicy(sizePolicy)
+        self.button_export_csv.setMinimumSize(QSize(100, 0))
+
+        self.horizontalLayout_5.addWidget(self.button_export_csv)
+
+        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_5.addItem(self.horizontalSpacer_2)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_5)
 
 
         self.verticalLayout_3.addWidget(self.groupBox_3)
@@ -221,7 +246,9 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.button_put, self.button_delete)
         QWidget.setTabOrder(self.button_delete, self.line_employee_id)
         QWidget.setTabOrder(self.line_employee_id, self.button_get)
-        QWidget.setTabOrder(self.button_get, self.table)
+        QWidget.setTabOrder(self.button_get, self.button_import_csv)
+        QWidget.setTabOrder(self.button_import_csv, self.button_export_csv)
+        QWidget.setTabOrder(self.button_export_csv, self.table)
 
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -235,7 +262,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"RESTful API Tester", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"RESTful API Client", None))
         self.action_about.setText(QCoreApplication.translate("MainWindow", u"About", None))
         self.action_about_qt.setText(QCoreApplication.translate("MainWindow", u"About Qt", None))
         self.action_dark_mode.setText(QCoreApplication.translate("MainWindow", u"Dark Mode", None))
@@ -277,6 +304,8 @@ class Ui_MainWindow(object):
         self.button_get.setStatusTip(QCoreApplication.translate("MainWindow", u"Get Info", None))
 #endif // QT_CONFIG(statustip)
         self.button_get.setText(QCoreApplication.translate("MainWindow", u"Get", None))
+        self.button_import_csv.setText(QCoreApplication.translate("MainWindow", u"Import CSV", None))
+        self.button_export_csv.setText(QCoreApplication.translate("MainWindow", u"Export CSV", None))
         self.label_connection.setText(QCoreApplication.translate("MainWindow", u"FastAPI Connection Status Label", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
         self.menuSettings.setTitle(QCoreApplication.translate("MainWindow", u"Settings", None))

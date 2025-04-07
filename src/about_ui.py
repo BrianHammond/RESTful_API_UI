@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'about.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -83,7 +83,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"About", None))
-        self.label.setText(QCoreApplication.translate("Dialog", u"RESTful API UI", None))
+        self.label.setText(QCoreApplication.translate("Dialog", u"RESTful API Client", None))
         self.label_2.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p>This is just a simple program to help me practice python. </p><p>I have more at my <a href=\"https://github.com/brianhammond\"><span style=\" text-decoration: underline; color:#0000ff;\">github</span></a>.</p></body></html>", None))
         self.button_ok.setText(QCoreApplication.translate("Dialog", u"OK", None))
     # retranslateUi
